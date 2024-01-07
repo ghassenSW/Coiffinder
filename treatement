@@ -1,0 +1,131 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class Treatment {
+  String name;
+  String priceRange;
+
+  Treatment(this.name, this.priceRange);
+}
+
+class MyApp extends StatelessWidget {
+  final List<Treatment> treatments = [
+    Treatment("Facial", "\$20 - \$50"),
+    Treatment("Spa", "\$15 - \$30"),
+    Treatment("Bridal Packages", "\$20 - \$40"),
+    Treatment("Nail Art", "\$30 - \$80"),
+    Treatment("Hair Coloring", "\$25 - \$50"),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Treatments'), // Updated title here
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.purple, Colors.blue],
+              ),
+            ),
+          ),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: TreatmentList(treatments),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddTreatmentScreen()),
+                );
+              },
+              child: Text('Add Treatment'), // Updated button text here
+              style: ElevatedButton.styleFrom(
+                primary: Colors.blue,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class TreatmentList extends StatefulWidget {
+  final List<Treatment> treatments;
+
+  TreatmentList(this.treatments);
+
+  @override
+  _TreatmentListState createState() => _TreatmentListState();
+}
+
+class _TreatmentListState extends State<TreatmentList> {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: widget.treatments.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(widget.treatments[index].name),
+          subtitle: Text(widget.treatments[index].priceRange),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+                  // Handle delete action
+                  setState(() {
+                    widget.treatments.removeAt(index);
+                  });
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.edit, color: Colors.blue),
+                onPressed: () {
+                  // Handle edit action
+                  // You can implement a modal or navigate to a new screen for editing
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class AddTreatmentScreen extends StatefulWidget {
+  @override
+  _AddTreatmentScreenState createState() => _AddTreatmentScreenState();
+}
+
+class _AddTreatmentScreenState extends State<AddTreatmentScreen> {
+  final List<Treatment> newTreatments = [
+    Treatment("Facial", "\$30 - \$60"),
+    Treatment("Spa", "\$25 - \$50"),
+    Treatment("Bridal Packages", "\$50 - \$150"),
+    Treatment("Nail Art", "\$20 - \$40"),
+    Treatment("Hair Coloring", "\$40 - \$80"),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add Treatments'), // Updated title here
+      ),
+      body: TreatmentList(newTreatments),
+    );
+  }
+}
