@@ -1,4 +1,4 @@
-# coiffinder
+# salon_de_coiffughe
 
 A new Flutter project.
 
