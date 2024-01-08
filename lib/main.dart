@@ -97,7 +97,7 @@ class AppDrawer extends StatelessWidget {
               ListTile(
                 title: Text('My Reservations'),
                 onTap: () {
-                  Get.to(() => MyReservationsPage());
+                  Get.to(() => MyReservationsPage(userId: FirebaseAuth.instance.currentUser!.uid,));
                 },
               ),
               ListTile(

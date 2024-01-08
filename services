@@ -1,0 +1,131 @@
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class Service {
+  String name;
+  String priceRange;
+
+  Service(this.name, this.priceRange);
+}
+
+class MyApp extends StatelessWidget {
+  final List<Service> services = [
+    Service("Haircut", "\$20 - \$50"),
+    Service("Manicure", "\$15 - \$30"),
+    Service("Pedicure", "\$20 - \$40"),
+    Service("Massage", "\$30 - \$80"),
+    Service("Makeup", "\$25 - \$50"),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: Scaffold(
+        appBar: AppBar(
+          title: Text('Services'), // Updated title here
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [Colors.purple, Colors.blue],
+              ),
+            ),
+          ),
+        ),
+        body: Column(
+          children: [
+            Expanded(
+              child: ServiceList(services),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => AddServiceScreen()),
+                );
+              },
+              child: Text('Add Service'),
+              style: ElevatedButton.styleFrom(
+                primary: Colors.blue,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ServiceList extends StatefulWidget {
+  final List<Service> services;
+
+  ServiceList(this.services);
+
+  @override
+  _ServiceListState createState() => _ServiceListState();
+}
+
+class _ServiceListState extends State<ServiceList> {
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: widget.services.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(widget.services[index].name),
+          subtitle: Text(widget.services[index].priceRange),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+                  // Handle delete action
+                  setState(() {
+                    widget.services.removeAt(index);
+                  });
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.edit, color: Colors.blue),
+                onPressed: () {
+                  // Handle edit action
+                  // You can implement a modal or navigate to a new screen for editing
+                },
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class AddServiceScreen extends StatefulWidget {
+  @override
+  _AddServiceScreenState createState() => _AddServiceScreenState();
+}
+
+class _AddServiceScreenState extends State<AddServiceScreen> {
+  final List<Service> newServices = [
+    Service("Facial", "\$30 - \$60"),
+    Service("Spa", "\$25 - \$50"),
+    Service("Bridal Packages", "\$50 - \$150"),
+    Service("Nail Art", "\$20 - \$40"),
+    Service("Hair Coloring", "\$40 - \$80"),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Add Services'),
+      ),
+      body: ServiceList(newServices),
+    );
+  }
+}

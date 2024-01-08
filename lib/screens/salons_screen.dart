@@ -1,14 +1,26 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:coiffinder/main.dart';
+import 'package:coiffinder/screens/beautysalon_details.dart';
+
+
+
 
 class Salon {
   final String id;
   final String name;
   final String description;
-  final String? backgroundImage; // Add a field for the background image URL
+  final String? backgroundImage;
+  final Map<String, dynamic> services; // Add a field for the services map
 
-  Salon({required this.id, required this.name, required this.description, this.backgroundImage});
+  Salon({
+    required this.id,
+    required this.name,
+    required this.description,
+    this.backgroundImage,
+    required this.services,
+  });
 }
 
 class SalonsPage extends StatelessWidget {
@@ -48,29 +60,51 @@ class SalonList extends StatelessWidget {
 
         return ListView.builder(
           itemCount: snapshot.data!.docs.length,
-          itemExtent: 100, // Set the height of each item
+          itemExtent: 100,
           itemBuilder: (context, index) {
-            var salonData = snapshot.data!.docs[index].data() as Map<String, dynamic>;
+            var salonData =
+                snapshot.data!.docs[index].data() as Map<String, dynamic>;
             var salon = Salon(
               id: snapshot.data!.docs[index].id,
               name: salonData['name'] ?? '',
               description: salonData['description'] ?? '',
               backgroundImage: salonData['backgroundImage'],
+              services: salonData['Services'] ?? {},
             );
 
             return Container(
-              decoration: BoxDecoration(
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.pink.withOpacity(0.3), // Pink shadow color with opacity
-                    offset: Offset(0, 2),
-                    blurRadius: 3,
-                    spreadRadius: 1,
-                  ),
-                ],
-              ),
+              decoration: salon.backgroundImage != null
+                  ? BoxDecoration(
+                      image: DecorationImage(
+                        image: NetworkImage(salon.backgroundImage!),
+                        fit: BoxFit.cover,
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.pink.withOpacity(0.3),
+                          offset: Offset(0, 2),
+                          blurRadius: 3,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    )
+                  : BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: Color.fromARGB(255, 240, 158, 185)
+                              .withOpacity(0.3),
+                          offset: Offset(0, 0),
+                          blurRadius: 100,
+                          spreadRadius: 1,
+                        ),
+                      ],
+                    ),
               child: Card(
                 margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: ListTile(
                   title: Text(
                     salon.name,
@@ -82,10 +116,10 @@ class SalonList extends StatelessWidget {
                   ),
                   subtitle: Text(salon.description),
                   onTap: () {
-                    // Navigate to salon details page
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SalonDetailsPage(salon: salon)),
+                      MaterialPageRoute(
+                          builder: (context) => BeautySalonDetailsPage(salonId: salon.id,userId: FirebaseAuth.instance.currentUser!.uid,)),
                     );
                   },
                 ),
@@ -98,25 +132,3 @@ class SalonList extends StatelessWidget {
   }
 }
 
-class SalonDetailsPage extends StatelessWidget {
-  final Salon salon;
-
-  SalonDetailsPage({required this.salon});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(salon.name)),
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Description: ${salon.description}'),
-            // Add more details as needed
-          ],
-        ),
-      ),
-    );
-  }
-}
